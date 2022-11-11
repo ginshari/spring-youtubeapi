@@ -11,13 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ginshari.youtubeapi.AppConfig;
+import com.ginshari.youtubeapi.common.MyYouTube;
 import com.ginshari.youtubeapi.models.VideoModel;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
@@ -30,15 +27,14 @@ public class VideoService {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    private MyYouTube myYouTube;
+
     public VideoModel getVideo(String id) {
 
         try {
-            var youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(),
-                    new HttpRequestInitializer() {
-                        public void initialize(HttpRequest request) throws IOException {}
-                    }).setApplicationName("youtube-search-by-id").build();
 
-            YouTube.Videos.List videosListApi = youtube.videos().list("id,snippet");
+            YouTube.Videos.List videosListApi = myYouTube.videos().list("id,snippet");
 
             videosListApi.setKey(appConfig.apikey);
             videosListApi.setId(id);
